@@ -7,7 +7,6 @@ train*
 *.pt
 *.txt
 *.out
-*.sh
 log
 output
 data
