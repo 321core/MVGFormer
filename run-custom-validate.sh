@@ -30,8 +30,8 @@ CONFIG_FILE="configs/panoptic/knn5-lr4-q1024-memory-optimized.yaml"
 MODEL_PATH="models/mvgformer_q1024_model.pth.tar"
 CAMERA_FILE="real_camera_calibration.json"
 OUTPUT_DIR="./custom_inference_output"
-CONFIDENCE_THRESHOLD=0.5
-DEVICE="cuda"  # Use "cpu" if no GPU available
+CONFIDENCE_THRESHOLD=0.1
+DEVICE="cpu"  # Use "cpu" if no GPU available
 OUTPUT_FORMAT="both"  # Options: json, npy, both
 
 # Memory optimization settings

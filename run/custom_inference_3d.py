@@ -41,6 +41,7 @@ import lib.utils.misc as utils
 from models.util.misc import is_main_process
 import models
 import models.dq_transformer
+from utils.transforms import get_affine_transform, get_scale, affine_transform
 
 
 class CustomDataset(torch.utils.data.Dataset):
@@ -52,6 +53,9 @@ class CustomDataset(torch.utils.data.Dataset):
         self.cameras = self._load_cameras(camera_file)
         self.num_views = len(image_files)
         self.num_person = num_person
+        # Use same image size as original dataset (matching JointsDataset)
+        self.image_size = np.array([256, 256])  # Model's expected input size
+        self.heatmap_size = np.array([64, 64])  # For aug_trans calculation
 
     def _load_cameras(self, camera_file):
         """Load camera calibration from JSON file"""
@@ -82,12 +86,32 @@ class CustomDataset(torch.utils.data.Dataset):
         metas = []
 
         for i, image_file in enumerate(self.image_files):
-            # Load and process image
-            image = Image.open(image_file).convert('RGB')
+            # Load image using cv2 (same as JointsDataset)
+            data_numpy = cv2.imread(image_file, cv2.IMREAD_COLOR | cv2.IMREAD_IGNORE_ORIENTATION)
+            if data_numpy is None:
+                raise ValueError(f"Could not load image: {image_file}")
+
+            # Convert BGR to RGB (same as JointsDataset when color_rgb=True)
+            data_numpy = cv2.cvtColor(data_numpy, cv2.COLOR_BGR2RGB)
+
+            # Get image dimensions and calculate center/scale (same as JointsDataset)
+            height, width, _ = data_numpy.shape
+            c = np.array([width / 2.0, height / 2.0])
+            s = get_scale((width, height), self.image_size)
+            r = 0  # No rotation augmentation for inference
+
+            # Apply affine transformation (same as JointsDataset)
+            trans = get_affine_transform(c, s, r, self.image_size, inv=0)
+            input_image = cv2.warpAffine(
+                data_numpy,
+                trans, (int(self.image_size[0]), int(self.image_size[1])),
+                flags=cv2.INTER_LINEAR)
+
+            # Apply transforms (same as JointsDataset)
             if self.transform:
-                image_tensor = self.transform(image)
+                image_tensor = self.transform(input_image)
             else:
-                image_tensor = transforms.ToTensor()(image)
+                image_tensor = transforms.ToTensor()(input_image)
 
             # Get camera parameters
             cam_data = self.cameras[i] if i in self.cameras else {
@@ -117,15 +141,21 @@ class CustomDataset(torch.utils.data.Dataset):
                 'p': torch.tensor([p1, p2], dtype=torch.float32).unsqueeze(0).unsqueeze(-1),  # [1, 2, 1]
             }
 
-            # Get image dimensions for transforms
-            img_width, img_height = image.size
-            center = np.array([img_width / 2.0, img_height / 2.0])
-            scale = np.array([img_width / 200.0, img_height / 200.0])  # Default scale
+            # Create proper transform matrices (same as JointsDataset)
+            aff_trans = np.eye(3, 3)
+            aff_trans[0:2] = trans  # full img -> cropped img
+            inv_aff_trans = np.eye(3, 3)
+            inv_trans = get_affine_transform(c, s, r, self.image_size, inv=1)
+            inv_aff_trans[0:2] = inv_trans
 
-            # Create identity transforms (no augmentation for inference)
-            aff_trans = np.eye(3)
-            inv_aff_trans = np.eye(3)
-            aug_trans = np.eye(3)
+            # 3x3 data augmentation affine trans (same as JointsDataset)
+            aug_trans = np.eye(3, 3)
+            aug_trans[0:2] = trans  # full img -> cropped img
+            hm_scale = self.heatmap_size / self.image_size
+            scale_trans = np.eye(3, 3)  # cropped img -> heatmap
+            scale_trans[0, 0] = hm_scale[1]
+            scale_trans[1, 1] = hm_scale[0]
+            aug_trans = scale_trans @ aug_trans
 
             # Create dummy joint data with correct shapes (maximum_person=10, num_joints=15)
             maximum_person = 10
@@ -141,8 +171,8 @@ class CustomDataset(torch.utils.data.Dataset):
                 'roots_3d': torch.zeros((1, maximum_person, 3)),
                 'joints': torch.zeros((1, maximum_person, num_joints, 2)),
                 'joints_vis': torch.zeros((1, maximum_person, num_joints, 2)),
-                'center': torch.from_numpy(center).unsqueeze(0),  # Add batch dimension
-                'scale': torch.from_numpy(scale).unsqueeze(0),
+                'center': torch.from_numpy(c).unsqueeze(0),  # Add batch dimension
+                'scale': torch.from_numpy(s).unsqueeze(0),
                 'rotation': torch.tensor([0.0]),  # Add batch dimension
                 'camera': cam,
                 'camera_Intri': torch.from_numpy(K).unsqueeze(0),
