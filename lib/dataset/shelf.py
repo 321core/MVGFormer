@@ -134,8 +134,8 @@ class Shelf(JointsDataset):
         # actor_3d = np.array(
         #     np.array(data['actor3D'].tolist()).tolist()).squeeze()
 
-        # Fix bug: 
-        # *** ValueError: setting an array element with a sequence. 
+        # Fix bug:
+        # *** ValueError: setting an array element with a sequence.
         # The requested array has an inhomogeneous shape after 4 dimensions. The detected shape was (1, 3, 2000, 1) + inhomogeneous part.
         actor_3d = np.array(np.array(data['actor3D'].tolist()).tolist(), dtype=object).squeeze()
 
@@ -252,7 +252,7 @@ class Shelf(JointsDataset):
     def __len__(self):
         return self.db_size // self.num_views
 
-    def evaluate(self, preds, recall_threshold=500):
+    def evaluate(self, preds, recall_threshold=500, frame_id=None):
         datafile = os.path.join(self.dataset_root, 'actorsGT.mat')
         data = scio.loadmat(datafile)
 
@@ -263,7 +263,7 @@ class Shelf(JointsDataset):
         # *** ValueError: setting an array element with a sequence.
         # The requested array has an inhomogeneous shape after 4 dimensions. The detected shape was (1, 3, 2000, 1) + inhomogeneous part.
         actor_3d = np.array(np.array(data['actor3D'].tolist()).tolist(), dtype=object).squeeze()
-        
+
         num_person = len(actor_3d)
         total_gt = 0
         match_gt = 0

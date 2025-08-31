@@ -207,7 +207,7 @@ def main():
             if 'panoptic' in config.DATASET.TEST_DATASET \
                     or 'h36m' in config.DATASET.TEST_DATASET:
                 if config.DATASET.NMS_DETAIL:
-                    
+
                     nms_tb = PrettyTable()
                     nms_tb.field_names = \
                         ["dist_thr","num_nearby_joints_thr"] + \
@@ -215,7 +215,7 @@ def main():
                         [f'Recall{i}' for i in mpjpe_threshold] + \
                         ['Recall500','MPJPE']
 
-                    if config.DATASET.NMS_DETAIL_ALL: 
+                    if config.DATASET.NMS_DETAIL_ALL:
                         dist_thrs = [0.01,0.03,0.05,0.06,0.07,0.08,0.09,0.1,0.2,0.3,0.4,0.5,0.8]
                         num_nearby_joints_thrs = [3,4,5,6,7,8,9,10,13]
                     else: # default
@@ -232,37 +232,37 @@ def main():
                                 pred_nms = pred[indices]
                                 preds_nms_num = preds_nms_num + len(indices)
                                 preds_nms.append(pred_nms.copy())
-                            aps, recs, mpjpe, recall500 = test_loader.dataset.evaluate(preds_nms)
-                            nms_tb.add_row( 
-                                [dist_thr , num_nearby_joints_thr] + 
+                            aps, recs, mpjpe, recall500 = test_loader.dataset.evaluate(preds_nms, frame_id=process_frame_id)
+                            nms_tb.add_row(
+                                [dist_thr , num_nearby_joints_thr] +
                                 [f'{ap * 100:.2f}' for ap in aps] +
                                 [f'{re * 100:.2f}' for re in recs] +
                                 [f'{recall500 * 100:.2f}',f'{mpjpe:.2f}']
                             )
-                            # logger.info(nms_tb) #! DEBUG 
+                            # logger.info(nms_tb) #! DEBUG
                     # logger.info(nms_tb)
 
                 # nomral evo w/o NMS
                 # aps, recs, mpjpe, recall500 = \
                 #     test_loader.dataset.evaluate(preds)
-                # conf_thr_tb.add_row( 
-                #     [thr] + 
+                # conf_thr_tb.add_row(
+                #     [thr] +
                 #     [f'{ap * 100:.2f}' for ap in aps] +
                 #     [f'{re * 100:.2f}' for re in recs] +
                 #     [f'{recall500 * 100:.2f}',f'{mpjpe:.2f}']
                 # )
 
                 # upper bound
-                output_upper_bound = False 
+                output_upper_bound = False
                 if output_upper_bound:
                     aps_upper, recs_upper, mpjpe_upper, recall500_upper = \
-                        test_loader.dataset.evaluate(preds, method='mpjpe_sort')
-                    conf_thr_tb.add_row( 
-                        ['upper_bound (debug)'] + 
+                        test_loader.dataset.evaluate(preds, method='mpjpe_sort', frame_id=process_frame_id)
+                    conf_thr_tb.add_row(
+                        ['upper_bound (debug)'] +
                         [f'{ap * 100:.2f}' for ap in aps_upper] +
                         [f'{re * 100:.2f}' for re in recs_upper] +
                         [f'{recall500_upper * 100:.2f}',f'{mpjpe_upper:.2f}']
-                    )    
+                    )
 
                 # print table values
                 logger.info(nms_tb.get_string(fields=nms_tb.field_names[2:]))
@@ -270,7 +270,7 @@ def main():
             elif 'campus' in config.DATASET.TEST_DATASET \
                     or 'shelf' in config.DATASET.TEST_DATASET:
                 actor_pcp, avg_pcp, _, recall = \
-                    test_loader.dataset.evaluate(preds)
+                    test_loader.dataset.evaluate(preds, frame_id=process_frame_id)
                 msg = '     | Actor 1 | Actor 2 | Actor 3 | Average | \n' \
                     ' PCP |  {pcp_1:.2f}  |  {pcp_2:.2f}  ' \
                     '|  {pcp_3:.2f}  |  {pcp_avg:.2f}  |' \

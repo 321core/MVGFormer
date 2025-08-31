@@ -121,8 +121,8 @@ class Campus(JointsDataset):
         # actor_3d = np.array(
         #     np.array(data['actor3D'].tolist()).tolist()).squeeze()
 
-        # Fix bug: 
-        # *** ValueError: setting an array element with a sequence. 
+        # Fix bug:
+        # *** ValueError: setting an array element with a sequence.
         # The requested array has an inhomogeneous shape after 4 dimensions. The detected shape was (1, 3, 2000, 1) + inhomogeneous part.
         actor_3d = np.array(np.array(data['actor3D'].tolist()).tolist(), dtype=object).squeeze()
 
@@ -247,7 +247,7 @@ class Campus(JointsDataset):
     def __len__(self):
         return self.db_size // self.num_views
 
-    def evaluate(self, preds, recall_threshold=500):
+    def evaluate(self, preds, recall_threshold=500, frame_id=None):
         datafile = os.path.join(self.dataset_root, 'actorsGT.mat')
         data = scio.loadmat(datafile)
 

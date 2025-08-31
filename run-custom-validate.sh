@@ -6,6 +6,25 @@
 echo "MVGFormer Custom 3D Pose Inference"
 echo "=================================="
 
+# Default frame number (can be overridden with command line argument)
+FRAME_NUMBER=779
+
+# Parse command line arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --frame_number)
+            FRAME_NUMBER="$2"
+            shift 2
+            ;;
+        *)
+            echo "Unknown option: $1"
+            echo "Usage: $0 [--frame_number FRAME_NUMBER]"
+            echo "  --frame_number: Frame number to process (default: 779)"
+            exit 1
+            ;;
+    esac
+done
+
 # Configuration parameters - Memory Optimized Version
 CONFIG_FILE="configs/panoptic/knn5-lr4-q1024-memory-optimized.yaml"
 MODEL_PATH="models/mvgformer_q1024_model.pth.tar"
@@ -19,20 +38,24 @@ OUTPUT_FORMAT="both"  # Options: json, npy, both
 export CUDA_VISIBLE_DEVICES=0
 export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:128
 
+# Format frame number with zero padding (8 digits)
+PADDED_FRAME=$(printf "%08d" $FRAME_NUMBER)
+
 # Image files - Real images from panoptic dataset
 # Order matches the camera calibration file (00_03, 00_06, 00_12, 00_13, 00_23)
 IMAGE_FILES=(
-    "data/panoptic/160422_haggling1/hdImgs/00_03/00_03_00000779.jpg"
-    "data/panoptic/160422_haggling1/hdImgs/00_06/00_06_00000779.jpg"
-    "data/panoptic/160422_haggling1/hdImgs/00_12/00_12_00000779.jpg"
-    "data/panoptic/160422_haggling1/hdImgs/00_13/00_13_00000779.jpg"
-    "data/panoptic/160422_haggling1/hdImgs/00_23/00_23_00000779.jpg"
+    "data/panoptic/160422_haggling1/hdImgs/00_03/00_03_${PADDED_FRAME}.jpg"
+    "data/panoptic/160422_haggling1/hdImgs/00_06/00_06_${PADDED_FRAME}.jpg"
+    "data/panoptic/160422_haggling1/hdImgs/00_12/00_12_${PADDED_FRAME}.jpg"
+    "data/panoptic/160422_haggling1/hdImgs/00_13/00_13_${PADDED_FRAME}.jpg"
+    "data/panoptic/160422_haggling1/hdImgs/00_23/00_23_${PADDED_FRAME}.jpg"
 )
 
 echo "Configuration:"
 echo "  Config file: $CONFIG_FILE"
 echo "  Model path: $MODEL_PATH"
 echo "  Camera file: $CAMERA_FILE"
+echo "  Frame number: $FRAME_NUMBER"
 echo "  Number of cameras: ${#IMAGE_FILES[@]}"
 echo "  Output directory: $OUTPUT_DIR"
 echo "  Confidence threshold: $CONFIDENCE_THRESHOLD"
@@ -90,6 +113,7 @@ CMD="python run/custom_inference_3d.py \
     --confidence_threshold $CONFIDENCE_THRESHOLD \
     --device $DEVICE \
     --output_format $OUTPUT_FORMAT \
+    --num_person 5 \
     --image_files"
 
 # Add image files to command

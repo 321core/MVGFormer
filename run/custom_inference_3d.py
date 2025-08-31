@@ -46,11 +46,12 @@ import models.dq_transformer
 class CustomDataset(torch.utils.data.Dataset):
     """Custom dataset for arbitrary images and camera calibrations"""
 
-    def __init__(self, image_files, camera_file, transform=None):
+    def __init__(self, image_files, camera_file, transform=None, num_person=5):
         self.image_files = image_files
         self.transform = transform
         self.cameras = self._load_cameras(camera_file)
         self.num_views = len(image_files)
+        self.num_person = num_person
 
     def _load_cameras(self, camera_file):
         """Load camera calibration from JSON file"""
@@ -133,9 +134,9 @@ class CustomDataset(torch.utils.data.Dataset):
             # Create metadata matching JointsDataset format
             meta = {
                 'image': image_file,
-                'num_person': torch.tensor([0]),  # Tensor with batch dimension
-                'joints_3d': torch.zeros((1, maximum_person, num_joints, 3)),  # Add batch dimension
-                'joints_3d_vis': torch.zeros((1, maximum_person, num_joints, 3)),
+                'num_person': torch.tensor([self.num_person]),  # Tensor with batch dimension
+                'joints_3d': torch.randn((1, maximum_person, num_joints, 3)) * 500,  # Random values instead of zeros
+                'joints_3d_vis': torch.ones((1, maximum_person, num_joints, 3)),
                 'joints_3d_voxelpose_pred': torch.zeros((1, maximum_person, num_joints, 5)),
                 'roots_3d': torch.zeros((1, maximum_person, 3)),
                 'joints': torch.zeros((1, maximum_person, num_joints, 2)),
@@ -178,6 +179,8 @@ def parse_args():
                         help='device to use for inference')
     parser.add_argument('--output_format', default='both',
                         help='output format: json, npy, or both')
+    parser.add_argument('--num_person', default=5, type=int,
+                        help='number of expected persons in the scene')
 
     args, unknown = parser.parse_known_args()
     update_config(args.cfg)
@@ -310,7 +313,7 @@ def main():
     ])
 
     # Create custom dataset
-    dataset = CustomDataset(args.image_files, args.camera_file, transform)
+    dataset = CustomDataset(args.image_files, args.camera_file, transform, args.num_person)
     num_views = dataset.num_views
 
     # Setup CUDA

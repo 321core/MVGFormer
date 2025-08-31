@@ -139,7 +139,8 @@ DECODER:
   init_ref_method_value: 0
 
   # training stragegy
-  gt_match: True
+  # gt_match: True
+  gt_match: False
 
   optimizer: adam
   query_embed_type: person_joint
