@@ -183,3 +183,5 @@ amlt/
 .amltconfig
 vis_results
 vis_results/
+
+/custom_inference_output/

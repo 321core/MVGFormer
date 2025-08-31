@@ -6,6 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="f841632a-93cd-4533-830a-8199b89a111e" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example_camera_calibration.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/real_camera_calibration.json" beforeDir="false" afterPath="$PROJECT_DIR$/real_camera_calibration.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/run.sh" beforeDir="false" afterPath="$PROJECT_DIR$/run.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/run/custom_inference_3d.py" beforeDir="false" afterPath="$PROJECT_DIR$/run/custom_inference_3d.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,8 +51,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-e03c56caf84a-JavaScript-PY-252.23892.515" />
-        <option value="bundled-python-sdk-7e47963ff851-f0eec537fc84-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.23892.515" />
+        <option value="bundled-js-predefined-d6986cc7102b-b598e85cdad2-JavaScript-PY-252.25557.130" />
+        <option value="bundled-python-sdk-1bde30d8e611-7b97d883f26b-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.25557.130" />
       </set>
     </attachedChunks>
   </component>
@@ -70,6 +75,11 @@
       <workItem from="1756044218732" duration="578000" />
       <workItem from="1756047641334" duration="276000" />
       <workItem from="1756048234436" duration="759000" />
+      <workItem from="1756059338004" duration="675000" />
+      <workItem from="1756062025797" duration="129000" />
+      <workItem from="1756110912640" duration="1039000" />
+      <workItem from="1756565431089" duration="874000" />
+      <workItem from="1756566411557" duration="1625000" />
     </task>
     <servers />
   </component>

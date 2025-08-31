@@ -22,11 +22,11 @@ export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:128
 # Image files - Real images from panoptic dataset
 # Order matches the camera calibration file (00_03, 00_06, 00_12, 00_13, 00_23)
 IMAGE_FILES=(
-    "data/panoptic/160422_haggling1/hdImgs/00_03/00_03_00000010.jpg"
-    "data/panoptic/160422_haggling1/hdImgs/00_06/00_06_00000010.jpg"
-    "data/panoptic/160422_haggling1/hdImgs/00_12/00_12_00000010.jpg"
-    "data/panoptic/160422_haggling1/hdImgs/00_13/00_13_00000010.jpg"
-    "data/panoptic/160422_haggling1/hdImgs/00_23/00_23_00000010.jpg"
+    "data/panoptic/160422_haggling1/hdImgs/00_03/00_03_00000779.jpg"
+    "data/panoptic/160422_haggling1/hdImgs/00_06/00_06_00000779.jpg"
+    "data/panoptic/160422_haggling1/hdImgs/00_12/00_12_00000779.jpg"
+    "data/panoptic/160422_haggling1/hdImgs/00_13/00_13_00000779.jpg"
+    "data/panoptic/160422_haggling1/hdImgs/00_23/00_23_00000779.jpg"
 )
 
 echo "Configuration:"
