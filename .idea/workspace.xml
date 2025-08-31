@@ -5,14 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f841632a-93cd-4533-830a-8199b89a111e" name="변경" comment="">
-      <change afterPath="$PROJECT_DIR$/run-validate.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/configs/panoptic/knn5-lr4-q1024-memory-optimized.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/configs/panoptic/knn5-lr4-q1024-memory-optimized.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/dataset/campus.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/dataset/campus.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/dataset/panoptic.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/dataset/panoptic.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/dataset/shelf.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/dataset/shelf.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run.sh" beforeDir="false" afterPath="$PROJECT_DIR$/run-custom-validate.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run/custom_inference_3d.py" beforeDir="false" afterPath="$PROJECT_DIR$/run/custom_inference_3d.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/run/validate_3d.py" beforeDir="false" afterPath="$PROJECT_DIR$/run/validate_3d.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -83,7 +77,7 @@
       <workItem from="1756110912640" duration="1039000" />
       <workItem from="1756565431089" duration="874000" />
       <workItem from="1756566411557" duration="1940000" />
-      <workItem from="1756625139646" duration="10432000" />
+      <workItem from="1756625139646" duration="15997000" />
     </task>
     <servers />
   </component>

@@ -188,6 +188,35 @@ def main():
         ['Recall500','MPJPE']
 
     process_frame_id = args.frame_id
+    max_gt_frames = len(test_dataset) // num_views
+    is_out_of_range = process_frame_id is not None and process_frame_id >= max_gt_frames
+
+    # Output frame information when frame_id is specified
+    if process_frame_id is not None:
+        print("=" * 60)
+        if is_out_of_range:
+            print("INFERENCE-ONLY MODE")
+        else:
+            print("FRAME-SPECIFIC VALIDATION")
+        print("=" * 60)
+        print(f"Processing specific frame: {process_frame_id}")
+        print(f"Dataset: {config.DATASET.TEST_DATASET}")
+        print(f"Test subset: {config.DATASET.TEST_SUBSET}")
+        print(f"Number of views: {num_views}")
+        print(f"Total dataset size: {len(test_dataset)} samples")
+        print(f"Ground truth samples: {max_gt_frames}")
+
+        if is_out_of_range:
+            print(f"WARNING: Frame {process_frame_id} is beyond GT range (max: {max_gt_frames - 1})")
+            print("Ground Truth not available - performing inference only")
+        else:
+            print(f"Frame {process_frame_id} is valid (0-{max_gt_frames - 1})")
+        print("=" * 60)
+        print()
+    else:
+        print(f"Processing all frames ({max_gt_frames} total)")
+        print()
+
     for thr in config.DECODER.inference_conf_thr:
         pred_path = os.path.join(final_output_dir, f"{config.TEST.PRED_FILE}-{thr}.npy")
         if config.TEST.PRED_FILE and os.path.isfile(pred_path):
@@ -204,7 +233,43 @@ def main():
         if is_main_process():
             precision = None
 
-            if 'panoptic' in config.DATASET.TEST_DATASET \
+            if is_out_of_range:
+                # Inference-only mode: skip evaluation, show predictions only
+                print("\n" + "=" * 60)
+                print("INFERENCE RESULTS")
+                print("=" * 60)
+
+                # Apply NMS to predictions
+                preds_nms = []
+                total_predictions = 0
+
+                for pred in preds:
+                    pred = pred[pred[:, 0, 3] >= 0]
+                    indices = nearby_joints_nms(pred, 0.3, 7)  # Default NMS parameters
+                    pred_nms = pred[indices]
+                    total_predictions += len(pred_nms)
+                    preds_nms.append(pred_nms.copy())
+
+                print(f"Confidence threshold: {thr}")
+                print(f"Total predictions generated: {total_predictions}")
+
+                if total_predictions > 0:
+                    for i, pred in enumerate(preds_nms):
+                        if len(pred) > 0:
+                            print(f"Frame {process_frame_id}: {len(pred)} persons detected")
+                            for person_idx, person_pred in enumerate(pred):
+                                joints_3d = person_pred[:, :3]
+                                confidence = np.mean(person_pred[:, 4])
+                                print(f"  Person {person_idx + 1}: {joints_3d.shape[0]} joints, confidence: {confidence:.3f}")
+                else:
+                    print("No predictions generated (all below confidence threshold)")
+
+                print("=" * 60)
+                print("NOTE: Accuracy metrics (AP, MPJPE, Recall) cannot be computed")
+                print("      because Ground Truth is not available for this frame.")
+                print("=" * 60)
+
+            elif 'panoptic' in config.DATASET.TEST_DATASET \
                     or 'h36m' in config.DATASET.TEST_DATASET:
                 if config.DATASET.NMS_DETAIL:
 
@@ -240,6 +305,58 @@ def main():
                                 [f'{recall500 * 100:.2f}',f'{mpjpe:.2f}']
                             )
                             # logger.info(nms_tb) #! DEBUG
+
+                    # Display prediction results when frame_id is specified
+                    if process_frame_id is not None:
+                        print("\n" + "=" * 60)
+                        print("PREDICTION RESULTS (NPY DATA)")
+                        print("=" * 60)
+                        print(f"Confidence threshold: {thr}")
+                        print(f"NMS parameters: dist_thr=0.3, nearby_joints_thr=7")
+
+                        # Use the last processed preds_nms (with default parameters)
+                        total_predictions = 0
+                        for pred in preds_nms:
+                            total_predictions += len(pred)
+
+                        print(f"Total predictions generated: {total_predictions}")
+
+                        if total_predictions > 0:
+                            # Display the actual NPY data structure
+                            print(f"\nNPY Prediction Data for Frame {process_frame_id}:")
+                            print("-" * 40)
+
+                            for i, pred in enumerate(preds_nms):
+                                if len(pred) > 0:
+                                    print(f"\nFrame {process_frame_id}: {len(pred)} persons detected")
+                                    print(f"Prediction array shape: {pred.shape}")
+                                    print(f"Data format: [x, y, z, visibility_flag, confidence_score] per joint")
+                                    print()
+
+                                    for person_idx, person_pred in enumerate(pred):
+                                        print(f"Person {person_idx + 1}:")
+                                        print(f"  Shape: {person_pred.shape}")
+                                        print(f"  NPY Data:")
+
+                                        # Display all joint data in NPY format
+                                        joint_names = ['Nose', 'Neck', 'RShoulder', 'RElbow', 'RWrist', 'LShoulder',
+                                                      'LElbow', 'LWrist', 'RHip', 'RKnee', 'RAnkle', 'LHip',
+                                                      'LKnee', 'LAnkle', 'Head']
+
+                                        for j_idx, joint_data in enumerate(person_pred):
+                                            joint_name = joint_names[j_idx] if j_idx < len(joint_names) else f"Joint_{j_idx}"
+                                            x, y, z, vis_flag, conf = joint_data[0], joint_data[1], joint_data[2], joint_data[3], joint_data[4]
+                                            print(f"    {j_idx:2d} {joint_name:10s}: [{x:8.3f}, {y:8.3f}, {z:8.3f}, {vis_flag:6.1f}, {conf:6.3f}]")
+
+                                        print()  # Empty line between persons
+                        else:
+                            print("No predictions generated (all below confidence threshold)")
+
+                        print("=" * 60)
+                        print("NOTE: This is the same data structure saved to the NPY file")
+                        print("=" * 60)
+                        print()
+
                     # logger.info(nms_tb)
 
                 # nomral evo w/o NMS
