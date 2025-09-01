@@ -6,9 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="f841632a-93cd-4533-830a-8199b89a111e" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/configs/panoptic/knn5-lr4-q1024-memory-optimized.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/configs/panoptic/knn5-lr4-q1024-memory-optimized.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/run-custom-validate.sh" beforeDir="false" afterPath="$PROJECT_DIR$/run-custom-validate.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run/custom_inference_3d.py" beforeDir="false" afterPath="$PROJECT_DIR$/run/custom_inference_3d.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -81,6 +79,7 @@
       <workItem from="1756625139646" duration="15997000" />
       <workItem from="1756661018772" duration="632000" />
       <workItem from="1756661714320" duration="2687000" />
+      <workItem from="1756696646302" duration="3124000" />
     </task>
     <servers />
   </component>

@@ -31,7 +31,7 @@ MODEL_PATH="models/mvgformer_q1024_model.pth.tar"
 CAMERA_FILE="real_camera_calibration.json"
 OUTPUT_DIR="./custom_inference_output"
 CONFIDENCE_THRESHOLD=0.1
-DEVICE="cpu"  # Use "cpu" if no GPU available
+DEVICE="cuda"  # Use GPU for inference (required)
 OUTPUT_FORMAT="both"  # Options: json, npy, both
 
 # Memory optimization settings
