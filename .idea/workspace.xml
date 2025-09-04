@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="f841632a-93cd-4533-830a-8199b89a111e" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run-custom-validate.sh" beforeDir="false" afterPath="$PROJECT_DIR$/run-custom-validate.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -80,6 +79,8 @@
       <workItem from="1756661018772" duration="632000" />
       <workItem from="1756661714320" duration="2687000" />
       <workItem from="1756696646302" duration="3124000" />
+      <workItem from="1756970106554" duration="72000" />
+      <workItem from="1756970313991" duration="3323000" />
     </task>
     <servers />
   </component>
